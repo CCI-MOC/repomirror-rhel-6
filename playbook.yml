@@ -56,7 +56,19 @@
         dest: /etc/cron.daily/reposync-daily.sh
         mode: 0755
 
+    - name: install repoclients ipset
+      tags: [firewall]
+      copy:
+        src: repoclients.ipset
+        dest: /etc/sysconfig/ipset
+      notify: reload-ipset
+
   handlers:
     - name: restart-httpd
       command: >-
         apachectl -k restart
+
+    - name: reload-ipset
+      shell: |
+        ipset flush repoclients
+        ipset restore -! < /etc/sysconfig/ipset
