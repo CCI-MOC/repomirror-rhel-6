@@ -13,6 +13,7 @@
         setype: httpd_sys_content_t
 
     - name: enable repositories
+      tags: [repos]
       rhsm_repository:
         name: '{{ item }}'
       loop:
@@ -24,6 +25,7 @@
         - rhel-6-server-extras-rpms
 
     - name: install packages
+      tags: [packages]
       package:
         name: '{{ packages }}'
         state: present
@@ -34,16 +36,25 @@
           - httpd
 
     - name: activate apache
+      tags: [apache]
       service:
         name: httpd
         enabled: true
         state: started
 
     - name: install apache configuration
+      tags: [apache]
       copy:
         src: repos.conf
         dest: /etc/httpd/conf.d/repos.conf
       notify: restart-httpd
+
+    - name: install reposync cron job
+      tags: [cron]
+      copy:
+        src: reposync-daily.sh
+        dest: /etc/cron.daily/reposync-daily.sh
+        mode: 0755
 
   handlers:
     - name: restart-httpd
