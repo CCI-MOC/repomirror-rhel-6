@@ -1,5 +1,15 @@
 ---
 - hosts: repomirror6.massopen.cloud
+  vars:
+    repos:
+      - rhel-6-server-rpms
+      - rhel-6-server-eus-rpms
+      - rhel-6-server-eus-optional-rpms
+      - rhel-6-server-eus-rhn-tools-rpms
+      - rhel-6-server-eus-supplementary-rpms
+      - rhel-6-server-extras-rpms
+    baseurl: http://repomirror6.massopen.cloud/repos/
+
   tasks:
     - name: ensure mirror root exists
       file:
@@ -16,13 +26,13 @@
       tags: [repos]
       rhsm_repository:
         name: '{{ item }}'
-      loop:
-        - rhel-6-server-rpms
-        - rhel-6-server-eus-rpms
-        - rhel-6-server-eus-optional-rpms
-        - rhel-6-server-eus-rhn-tools-rpms
-        - rhel-6-server-eus-supplementary-rpms
-        - rhel-6-server-extras-rpms
+      loop: "{{ repos }}"
+
+    - name: generate moc-rhel6.repo
+      tags: [repofile]
+      template:
+        src: moc-rhel6.j2.repo
+        dest: /srv/repos/moc-rhel6.repo
 
     - name: install packages
       tags: [packages]
