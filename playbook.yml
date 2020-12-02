@@ -14,7 +14,14 @@
       - 129.10.5.0/24
       - 71.248.161.49/32
 
+  collections:
+    - moc.ops_common
+
   tasks:
+    - import_role:
+        name: root-ssh-access
+      tags: [ssh]
+
     - name: ensure mirror root exists
       file:
         path: /srv/repos
