@@ -1,3 +1,7 @@
 ---
+# To install a collection directly from github:
+#
+#     git clone https://github.com/CCI-MOC/moc-ansible-ops-common \
+#       collections/ansible_collections/moc/ops_common
 collections:
   - moc.ops_common
