@@ -1,0 +1,40 @@
+---
+- hosts: repomirror6.massopen.cloud
+  tasks:
+    - name: ensure mirror root exists
+      file:
+        path: /srv/repos
+        state: directory
+        mode: 0755
+
+    - name: set selinux context for mirror root
+      sefcontext:
+        target: '/srv/repos(/.*)?'
+        setype: httpd_sys_content_t
+
+    - name: install packages
+      package:
+        name: '{{ packages }}'
+        state: present
+      vars:
+        packages:
+          - ipset
+          - yum-utils
+          - httpd
+
+    - name: activate apache
+      service:
+        name: httpd
+        enabled: true
+        state: started
+
+    - name: install apache configuration
+      copy:
+        src: repos.conf
+        dest: /etc/httpd/conf.d/repos.conf
+      notify: restart-httpd
+
+  handlers:
+    - name: restart-httpd
+      command: >-
+        apachectl -k restart
