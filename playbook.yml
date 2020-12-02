@@ -34,6 +34,7 @@
           - ipset
           - yum-utils
           - httpd
+          - createrepo
 
     - name: activate apache
       tags: [apache]
