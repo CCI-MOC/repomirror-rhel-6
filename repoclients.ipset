@@ -1,2 +1,0 @@
-create repoclients hash:net family inet hashsize 1024 maxelem 65536
-add repoclients 129.10.5.0/24

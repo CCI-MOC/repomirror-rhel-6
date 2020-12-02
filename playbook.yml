@@ -9,6 +9,10 @@
       - rhel-6-server-eus-supplementary-rpms
       - rhel-6-server-extras-rpms
     baseurl: http://repomirror6.massopen.cloud/repos/
+    allowed_clients:
+      - 140.247.115.0/24
+      - 129.10.5.0/24
+      - 71.248.161.49/32
 
   tasks:
     - name: ensure mirror root exists
@@ -69,10 +73,17 @@
 
     - name: install repoclients ipset
       tags: [firewall]
-      copy:
-        src: repoclients.ipset
+      template:
+        src: repoclients.j2.ipset
         dest: /etc/sysconfig/ipset
       notify: reload-ipset
+
+    - name: install iptables ruleset
+      tags: [firewall]
+      copy:
+        src: iptables
+        dest: /etc/sysconfig/iptables
+      notify: reload-iptables
 
   handlers:
     - name: restart-httpd
@@ -83,3 +94,7 @@
       shell: |
         ipset flush repoclients
         ipset restore -! < /etc/sysconfig/ipset
+
+    - name: reload-iptables
+      command: >-
+        service iptables reload

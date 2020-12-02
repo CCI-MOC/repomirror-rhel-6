@@ -1,0 +1,4 @@
+create repoclients hash:net family inet hashsize 1024 maxelem 65536
+{% for client in allowed_clients %}
+add repoclients {{ client }}
+{% endfor %}

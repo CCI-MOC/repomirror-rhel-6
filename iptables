@@ -1,0 +1,15 @@
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+
+-P INPUT ACCEPT
+-A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+-A INPUT -p icmp -j ACCEPT
+-A INPUT -i lo -j ACCEPT
+-A INPUT -p tcp --dport 22 -m state --state NEW -j ACCEPT
+-A INPUT -p tcp --dport 80 -m set --match-set repoclients src -j ACCEPT
+
+-A INPUT -m limit --limit 10/sec -j LOG --log-prefix "REJECT INPUT "
+-A INPUT -j REJECT --reject-with icmp-host-prohibited
+COMMIT
