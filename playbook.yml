@@ -12,6 +12,17 @@
         target: '/srv/repos(/.*)?'
         setype: httpd_sys_content_t
 
+    - name: enable repositories
+      rhsm_repository:
+        name: '{{ item }}'
+      loop:
+        - rhel-6-server-rpms
+        - rhel-6-server-eus-rpms
+        - rhel-6-server-eus-optional-rpms
+        - rhel-6-server-eus-rhn-tools-rpms
+        - rhel-6-server-eus-supplementary-rpms
+        - rhel-6-server-extras-rpms
+
     - name: install packages
       package:
         name: '{{ packages }}'
