@@ -7,9 +7,15 @@
 -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
 -A INPUT -p icmp -j ACCEPT
 -A INPUT -i lo -j ACCEPT
--A INPUT -p tcp --dport 22 -m state --state NEW -j ACCEPT
--A INPUT -p tcp --dport 80 -m set --match-set repoclients src -j ACCEPT
 
+# ratelimit ssh connections
+-A INPUT -p tcp --dport 22 -m state --state NEW -m recent --name ssh_ratelimit --update --seconds 60 --hitcount 4 -j DROP
+-A INPUT -p tcp --dport 22 -m state --state NEW -m recent --name ssh_ratelimit --set -j ACCEPT
+
+# only permit http access to members of the repoclients ipset
+-A INPUT -p tcp --dport 80 -m set --match-set repoclients src -m state --state NEW -j ACCEPT
+
+# log and reject everything else
 -A INPUT -m limit --limit 10/sec -j LOG --log-prefix "REJECT INPUT "
 -A INPUT -j REJECT --reject-with icmp-host-prohibited
 COMMIT
